@@ -4,10 +4,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/Caknoooo/go-gin-clean-starter/command"
-	"github.com/Caknoooo/go-gin-clean-starter/middleware"
-	"github.com/Caknoooo/go-gin-clean-starter/provider"
-	"github.com/Caknoooo/go-gin-clean-starter/routes"
+	"github.com/Lab-RPL-ITS/twitter-clone-api/command"
+	"github.com/Lab-RPL-ITS/twitter-clone-api/middleware"
+	"github.com/Lab-RPL-ITS/twitter-clone-api/provider"
+	"github.com/Lab-RPL-ITS/twitter-clone-api/routes"
 	"github.com/samber/do"
 
 	"github.com/common-nighthawk/go-figure"
@@ -42,7 +42,7 @@ func run(server *gin.Engine) {
 		serve = ":" + port
 	}
 
-	myFigure := figure.NewColorFigure("Caknoo", "", "green", true)
+	myFigure := figure.NewColorFigure("Twitter Clone API", "", "green", true)
 	myFigure.Print()
 
 	if err := server.Run(serve); err != nil {

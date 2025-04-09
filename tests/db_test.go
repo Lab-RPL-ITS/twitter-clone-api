@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Caknoooo/go-gin-clean-starter/constants"
+	"github.com/Lab-RPL-ITS/twitter-clone-api/constants"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/postgres"

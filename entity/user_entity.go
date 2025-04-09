@@ -1,20 +1,18 @@
 package entity
 
 import (
-	"github.com/Caknoooo/go-gin-clean-starter/helpers"
+	"github.com/Lab-RPL-ITS/twitter-clone-api/helpers"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	ID         uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
-	Name       string    `json:"name"`
-	TelpNumber string    `json:"telp_number"`
-	Email      string    `json:"email"`
-	Password   string    `json:"password"`
-	Role       string    `json:"role"`
-	ImageUrl   string    `json:"image_url"`
-	IsVerified bool      `json:"is_verified"`
+	ID       uuid.UUID `gorm:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
+	Name     string    `gorm:"not null" json:"name"`
+	Username string    `gorm:"not null" gorm:"unique" json:"username"`
+	Bio      string    `gorm:"not null" json:"bio"`
+	Password string    `gorm:"not null" json:"password"`
+	ImageUrl *string   `json:"image_url"`
 
 	Timestamp
 }

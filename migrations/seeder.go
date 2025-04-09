@@ -1,7 +1,7 @@
 package migrations
 
 import (
-	"github.com/Caknoooo/go-gin-clean-starter/migrations/seeds"
+	"github.com/Lab-RPL-ITS/twitter-clone-api/migrations/seeds"
 	"gorm.io/gorm"
 )
 

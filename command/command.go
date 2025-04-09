@@ -5,16 +5,16 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Caknoooo/go-gin-clean-starter/constants"
-	"github.com/Caknoooo/go-gin-clean-starter/migrations"
-	"github.com/Caknoooo/go-gin-clean-starter/script"
+	"github.com/Lab-RPL-ITS/twitter-clone-api/constants"
+	"github.com/Lab-RPL-ITS/twitter-clone-api/migrations"
+	"github.com/Lab-RPL-ITS/twitter-clone-api/script"
 	"github.com/samber/do"
 	"gorm.io/gorm"
 )
 
 func Commands(injector *do.Injector) bool {
 	db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB)
-	
+
 	var scriptName string
 
 	migrate := false

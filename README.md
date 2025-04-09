@@ -33,13 +33,13 @@ http://your-domain/logs
 - PostgreSQL Version `>= version 15.0`
 
 ## How To Use
-1. Clone the repository or **Use This Template**
+1. Clone the repository
   ```bash
-  git clone https://github.com/Caknoooo/go-gin-clean-starter.git
+  git clone https://github.com/Lab-RPL-ITS/twitter-clone-api.git
   ```
 2. Navigate to the project directory:
   ```bash
-  cd go-gin-clean-starter
+  cd twitter-clone-api
   ```
 3. Copy the example environment file and configure it:
   ```bash 

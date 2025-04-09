@@ -1,8 +1,7 @@
 package utils
 
 import (
-	"github.com/Caknoooo/go-gin-clean-starter/config"
-
+	"github.com/Lab-RPL-ITS/twitter-clone-api/config"
 	"gopkg.in/gomail.v2"
 )
 
