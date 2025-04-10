@@ -15,12 +15,14 @@ const (
 	// Succcess
 	MESSAGE_SUCCESS_CREATE_POST    = "success create post"
 	MESSAGE_SUCCESS_GET_POST_BY_ID = "success get post by id"
+	MESSAGE_SUCCESS_DELETE_POST    = "success delete post"
 )
 
 var (
-	ErrCreatePost    = errors.New("failed to create post")
-	ErrGetPostById   = errors.New("post not found")
-	ErrParseParentID = errors.New("failed to parse parent id")
+	ErrCreatePost     = errors.New("failed to create post")
+	ErrGetPostById    = errors.New("post not found")
+	ErrParseParentID  = errors.New("failed to parse parent id")
+	ErrDeletePostById = errors.New("failed to delete post")
 )
 
 type (

@@ -14,6 +14,7 @@ type (
 	PostController interface {
 		CreatePost(ctx *gin.Context)
 		GetPostById(ctx *gin.Context)
+		DeletePostById(ctx *gin.Context)
 	}
 
 	postController struct {
@@ -62,5 +63,19 @@ func (c *postController) GetPostById(ctx *gin.Context) {
 	}
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_POST_BY_ID, result)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *postController) DeletePostById(ctx *gin.Context) {
+	postId, err := uuid.Parse(ctx.Param("post_id"))
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_ID, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	err = c.postService.DeletePostById(ctx.Request.Context(), postId)
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_POST, nil)
 	ctx.JSON(http.StatusOK, res)
 }

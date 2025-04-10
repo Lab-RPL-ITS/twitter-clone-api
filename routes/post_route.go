@@ -18,5 +18,6 @@ func Post(route *gin.Engine, injector *do.Injector) {
 		// Post
 		routes.POST("/", middleware.Authenticate(jwtService), postController.CreatePost)
 		routes.GET("/:post_id", postController.GetPostById)
+		routes.DELETE("/:post_id", middleware.Authenticate(jwtService), postController.DeletePostById)
 	}
 }

@@ -13,6 +13,7 @@ type (
 	PostService interface {
 		CreatePost(ctx context.Context, req dto.PostCreateRequest) (dto.PostResponse, error)
 		GetPostById(ctx context.Context, postId uuid.UUID) (dto.PostResponse, error)
+		DeletePostById(ctx context.Context, postId uuid.UUID) error
 	}
 
 	postService struct {
@@ -91,4 +92,17 @@ func (s *postService) GetPostById(ctx context.Context, postId uuid.UUID) (dto.Po
 			ImageUrl: post.User.ImageUrl,
 		},
 	}, nil
+}
+
+func (s *postService) DeletePostById(ctx context.Context, postId uuid.UUID) error {
+	_, err := s.postRepo.GetPostById(ctx, nil, postId)
+	if err != nil {
+		return dto.ErrGetPostById
+	}
+
+	if err := s.postRepo.DeletePostById(ctx, nil, postId); err != nil {
+		return dto.ErrDeletePostById
+	}
+
+	return nil
 }
