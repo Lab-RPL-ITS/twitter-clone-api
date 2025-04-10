@@ -43,8 +43,19 @@ func (r *postRepository) GetPostById(ctx context.Context, tx *gorm.DB, postId uu
 	}
 
 	var post entity.Post
-	if err := tx.WithContext(ctx).Joins("JOIN users ON users.id = posts.user_id ").Where("posts.id = ?", postId).Take(&post).Error; err != nil {
-		return entity.Post{}, err
+	if err := tx.WithContext(ctx).Joins("User").Where("posts.id = ?", postId).Take(&post).Error; err != nil {
+		return entity.Post{
+			ID:       post.ID,
+			Text:     post.Text,
+			ParentID: post.ParentID,
+			User: entity.User{
+				ID:       post.User.ID,
+				Name:     post.User.Name,
+				Username: post.User.Username,
+				Bio:      post.User.Bio,
+				ImageUrl: post.User.ImageUrl,
+			},
+		}, err
 	}
 
 	return post, nil

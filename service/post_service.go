@@ -6,11 +6,13 @@ import (
 	"github.com/Lab-RPL-ITS/twitter-clone-api/dto"
 	"github.com/Lab-RPL-ITS/twitter-clone-api/entity"
 	"github.com/Lab-RPL-ITS/twitter-clone-api/repository"
+	"github.com/google/uuid"
 )
 
 type (
 	PostService interface {
 		CreatePost(ctx context.Context, req dto.PostCreateRequest) (dto.PostResponse, error)
+		GetPostById(ctx context.Context, postId uuid.UUID) (dto.PostResponse, error)
 	}
 
 	postService struct {
@@ -67,6 +69,26 @@ func (s *postService) CreatePost(ctx context.Context, req dto.PostCreateRequest)
 			Bio:      user.Bio,
 			UserName: user.Username,
 			ImageUrl: user.ImageUrl,
+		},
+	}, nil
+}
+
+func (s *postService) GetPostById(ctx context.Context, postId uuid.UUID) (dto.PostResponse, error) {
+	post, err := s.postRepo.GetPostById(ctx, nil, postId)
+	if err != nil {
+		return dto.PostResponse{}, dto.ErrGetPostById
+	}
+
+	return dto.PostResponse{
+		ID:       post.ID.String(),
+		Text:     post.Text,
+		ParentID: post.ParentID,
+		User: dto.UserResponse{
+			ID:       post.UserID.String(),
+			Name:     post.User.Name,
+			Bio:      post.User.Bio,
+			UserName: post.User.Username,
+			ImageUrl: post.User.ImageUrl,
 		},
 	}, nil
 }

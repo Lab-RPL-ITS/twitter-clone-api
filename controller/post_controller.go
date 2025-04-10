@@ -7,11 +7,13 @@ import (
 	"github.com/Lab-RPL-ITS/twitter-clone-api/service"
 	"github.com/Lab-RPL-ITS/twitter-clone-api/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type (
 	PostController interface {
-		Create(ctx *gin.Context)
+		CreatePost(ctx *gin.Context)
+		GetPostById(ctx *gin.Context)
 	}
 
 	postController struct {
@@ -25,7 +27,7 @@ func NewPostController(ps service.PostService) PostController {
 	}
 }
 
-func (c *postController) Create(ctx *gin.Context) {
+func (c *postController) CreatePost(ctx *gin.Context) {
 	var post dto.PostCreateRequest
 	if err := ctx.ShouldBind(&post); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_DATA_FROM_BODY, err.Error(), nil)
@@ -41,5 +43,24 @@ func (c *postController) Create(ctx *gin.Context) {
 	}
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_CREATE_POST, result)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *postController) GetPostById(ctx *gin.Context) {
+	postId, err := uuid.Parse(ctx.Param("post_id"))
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_ID, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	result, err := c.postService.GetPostById(ctx.Request.Context(), postId)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_ID, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_POST_BY_ID, result)
 	ctx.JSON(http.StatusOK, res)
 }

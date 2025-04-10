@@ -10,9 +10,11 @@ const (
 	// Failed
 	MESSAGE_FAILED_GET_POST_DATA_FROM_BODY = "failed get data from body"
 	MESSAGE_FAILED_CREATE_POST             = "failed create post"
+	MESSAGE_FAILED_GET_POST_ID             = "failed get post id"
 
 	// Succcess
-	MESSAGE_SUCCESS_CREATE_POST = "success create post"
+	MESSAGE_SUCCESS_CREATE_POST    = "success create post"
+	MESSAGE_SUCCESS_GET_POST_BY_ID = "success get post by id"
 )
 
 var (

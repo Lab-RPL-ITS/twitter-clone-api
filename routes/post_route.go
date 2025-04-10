@@ -15,6 +15,8 @@ func Post(route *gin.Engine, injector *do.Injector) {
 
 	routes := route.Group("/api/post")
 	{
-		routes.POST("/", middleware.Authenticate(jwtService), postController.Create)
+		// Post
+		routes.POST("/", middleware.Authenticate(jwtService), postController.CreatePost)
+		routes.GET("/:post_id", postController.GetPostById)
 	}
 }
