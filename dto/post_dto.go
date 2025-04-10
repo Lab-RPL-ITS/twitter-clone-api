@@ -28,7 +28,6 @@ var (
 type (
 	PostCreateRequest struct {
 		Text     string     `json:"text" form:"text" binding:"required"`
-		UserID   string     `json:"user_id" form:"user_id" binding:"required"`
 		ParentID *uuid.UUID `json:"parent_id," form:"parent_id"`
 	}
 

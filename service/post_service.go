@@ -11,7 +11,7 @@ import (
 
 type (
 	PostService interface {
-		CreatePost(ctx context.Context, req dto.PostCreateRequest) (dto.PostResponse, error)
+		CreatePost(ctx context.Context, userId string, req dto.PostCreateRequest) (dto.PostResponse, error)
 		GetPostById(ctx context.Context, postId uuid.UUID) (dto.PostResponse, error)
 		DeletePostById(ctx context.Context, postId uuid.UUID) error
 	}
@@ -31,13 +31,7 @@ func NewPostService(userRepo repository.UserRepository, postRepo repository.Post
 	}
 }
 
-func (s *postService) CreatePost(ctx context.Context, req dto.PostCreateRequest) (dto.PostResponse, error) {
-	user, err := s.userRepo.GetUserById(ctx, nil, req.UserID)
-
-	if err != nil {
-		return dto.PostResponse{}, dto.ErrGetUserById
-	}
-
+func (s *postService) CreatePost(ctx context.Context, userId string, req dto.PostCreateRequest) (dto.PostResponse, error) {
 	if req.ParentID != nil {
 		_, err := s.postRepo.GetPostById(ctx, nil, *req.ParentID)
 		if err != nil {
@@ -45,19 +39,19 @@ func (s *postService) CreatePost(ctx context.Context, req dto.PostCreateRequest)
 		}
 	}
 
-	if err != nil {
-		return dto.PostResponse{}, dto.ErrParseParentID
-	}
-
 	post := entity.Post{
 		Text:     req.Text,
-		UserID:   user.ID,
 		ParentID: req.ParentID,
 	}
 
 	result, err := s.postRepo.CreatePost(ctx, nil, post)
 	if err != nil {
 		return dto.PostResponse{}, dto.ErrCreatePost
+	}
+
+	user, err := s.userRepo.GetUserById(ctx, nil, userId)
+	if err != nil {
+		return dto.PostResponse{}, dto.ErrGetUserById
 	}
 
 	return dto.PostResponse{

@@ -30,13 +30,15 @@ func NewPostController(ps service.PostService) PostController {
 
 func (c *postController) CreatePost(ctx *gin.Context) {
 	var post dto.PostCreateRequest
+	userId := ctx.GetString("user_id")
+
 	if err := ctx.ShouldBind(&post); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
-	result, err := c.postService.CreatePost(ctx.Request.Context(), post)
+	result, err := c.postService.CreatePost(ctx.Request.Context(), userId, post)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_POST, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
