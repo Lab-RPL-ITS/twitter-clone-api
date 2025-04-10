@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/Lab-RPL-ITS/twitter-clone-api/dto"
 	"github.com/Lab-RPL-ITS/twitter-clone-api/entity"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -14,6 +15,7 @@ type (
 		GetPostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID) (entity.Post, error)
 		DeletePostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID) error
 		UpdatePostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID, post entity.Post) (entity.Post, error)
+		GetAllPostsWithPagination(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetAllPostsRepositoryResponse, error)
 	}
 
 	postRepository struct {
@@ -85,4 +87,40 @@ func (r *postRepository) UpdatePostById(ctx context.Context, tx *gorm.DB, postId
 	}
 
 	return post, nil
+}
+
+func (r *postRepository) GetAllPostsWithPagination(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetAllPostsRepositoryResponse, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var posts []entity.Post
+	var err error
+	var count int64
+
+	req.Default()
+
+	query := tx.WithContext(ctx).Model(&entity.Post{}).Joins("User")
+	if req.Search != "" {
+		query = query.Where("text LIKE ?", "%"+req.Search+"%")
+	}
+
+	if err := query.Count(&count).Error; err != nil {
+		return dto.GetAllPostsRepositoryResponse{}, err
+	}
+
+	if err := query.Scopes(Paginate(req)).Find(&posts).Error; err != nil {
+		return dto.GetAllPostsRepositoryResponse{}, err
+	}
+
+	totalPage := TotalPage(count, int64(req.PerPage))
+	return dto.GetAllPostsRepositoryResponse{
+		Posts: posts,
+		PaginationResponse: dto.PaginationResponse{
+			Page:    req.Page,
+			PerPage: req.PerPage,
+			Count:   count,
+			MaxPage: totalPage,
+		},
+	}, err
 }

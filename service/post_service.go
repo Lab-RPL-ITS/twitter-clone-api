@@ -15,6 +15,7 @@ type (
 		GetPostById(ctx context.Context, postId uuid.UUID) (dto.PostResponse, error)
 		DeletePostById(ctx context.Context, postId uuid.UUID) error
 		UpdatePostById(ctx context.Context, userId string, postId uuid.UUID, req dto.PostUpdateRequest) (dto.PostResponse, error)
+		GetAllPosts(ctx context.Context, req dto.PaginationRequest) (dto.PostPaginationResponse, error)
 	}
 
 	postService struct {
@@ -130,6 +131,41 @@ func (s *postService) UpdatePostById(ctx context.Context, userId string, postId 
 			Bio:      result.User.Bio,
 			UserName: result.User.Username,
 			ImageUrl: result.User.ImageUrl,
+		},
+	}, nil
+}
+
+func (s *postService) GetAllPosts(ctx context.Context, req dto.PaginationRequest) (dto.PostPaginationResponse, error) {
+	dataWithPaginate, err := s.postRepo.GetAllPostsWithPagination(ctx, nil, req)
+	if err != nil {
+		return dto.PostPaginationResponse{}, err
+	}
+
+	var data []dto.PostResponse
+	for _, post := range dataWithPaginate.Posts {
+		datum := dto.PostResponse{
+			ID:       post.ID.String(),
+			Text:     post.Text,
+			ParentID: post.ParentID,
+			User: dto.UserResponse{
+				ID:       post.UserID.String(),
+				Name:     post.User.Name,
+				Bio:      post.User.Bio,
+				UserName: post.User.Username,
+				ImageUrl: post.User.ImageUrl,
+			},
+		}
+
+		data = append(data, datum)
+	}
+
+	return dto.PostPaginationResponse{
+		Data: data,
+		PaginationResponse: dto.PaginationResponse{
+			Page:    dataWithPaginate.Page,
+			PerPage: dataWithPaginate.PerPage,
+			MaxPage: dataWithPaginate.MaxPage,
+			Count:   dataWithPaginate.Count,
 		},
 	}, nil
 }

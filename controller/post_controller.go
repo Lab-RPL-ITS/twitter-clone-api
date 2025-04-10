@@ -17,6 +17,7 @@ type (
 		GetPostById(ctx *gin.Context)
 		DeletePostById(ctx *gin.Context)
 		UpdatePostById(ctx *gin.Context)
+		GetAllPosts(ctx *gin.Context)
 	}
 
 	postController struct {
@@ -111,5 +112,30 @@ func (c *postController) UpdatePostById(ctx *gin.Context) {
 	}
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_UPDATE_POST, result)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *postController) GetAllPosts(ctx *gin.Context) {
+	var req dto.PaginationRequest
+	if err := ctx.ShouldBind(&req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	posts, err := c.postService.GetAllPosts(ctx.Request.Context(), req)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_ALL_POSTS, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.Response{
+		Status:  true,
+		Message: dto.MESSAGE_SUCCESS_GET_ALL_POSTS,
+		Data:    posts.Data,
+		Meta:    posts.PaginationResponse,
+	}
+
 	ctx.JSON(http.StatusOK, res)
 }
