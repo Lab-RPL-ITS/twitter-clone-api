@@ -42,6 +42,7 @@ func (s *postService) CreatePost(ctx context.Context, userId string, req dto.Pos
 
 	post := entity.Post{
 		Text:     req.Text,
+		UserID:   uuid.MustParse(userId),
 		ParentID: req.ParentID,
 	}
 
