@@ -28,6 +28,7 @@ var (
 	ErrUsernameAlreadyExists = errors.New("username already exist")
 	ErrUsernameNotFound      = errors.New("username not found")
 	ErrPasswordNotMatch      = errors.New("password not match")
+	ErrUnauthorized          = errors.New("unauthorized")
 )
 
 type (

@@ -13,6 +13,7 @@ type (
 		CreatePost(ctx context.Context, tx *gorm.DB, post entity.Post) (entity.Post, error)
 		GetPostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID) (entity.Post, error)
 		DeletePostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID) error
+		UpdatePostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID, post entity.Post) (entity.Post, error)
 	}
 
 	postRepository struct {
@@ -72,4 +73,16 @@ func (r *postRepository) DeletePostById(ctx context.Context, tx *gorm.DB, postId
 	}
 
 	return nil
+}
+
+func (r *postRepository) UpdatePostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID, post entity.Post) (entity.Post, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	if err := tx.WithContext(ctx).Model(&entity.Post{}).Where("id = ?", postId).Updates(post).Error; err != nil {
+		return entity.Post{}, err
+	}
+
+	return post, nil
 }

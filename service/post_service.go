@@ -14,6 +14,7 @@ type (
 		CreatePost(ctx context.Context, userId string, req dto.PostCreateRequest) (dto.PostResponse, error)
 		GetPostById(ctx context.Context, postId uuid.UUID) (dto.PostResponse, error)
 		DeletePostById(ctx context.Context, postId uuid.UUID) error
+		UpdatePostById(ctx context.Context, userId string, postId uuid.UUID, req dto.PostUpdateRequest) (dto.PostResponse, error)
 	}
 
 	postService struct {
@@ -99,4 +100,35 @@ func (s *postService) DeletePostById(ctx context.Context, postId uuid.UUID) erro
 	}
 
 	return nil
+}
+
+func (s *postService) UpdatePostById(ctx context.Context, userId string, postId uuid.UUID, req dto.PostUpdateRequest) (dto.PostResponse, error) {
+	post, err := s.postRepo.GetPostById(ctx, nil, postId)
+	if err != nil {
+		return dto.PostResponse{}, dto.ErrGetPostById
+	}
+
+	if post.UserID.String() != userId {
+		return dto.PostResponse{}, dto.ErrUnauthorized
+	}
+
+	post.Text = req.Text
+
+	result, err := s.postRepo.UpdatePostById(ctx, nil, postId, post)
+	if err != nil {
+		return dto.PostResponse{}, dto.ErrUpdatePostById
+	}
+
+	return dto.PostResponse{
+		ID:       result.ID.String(),
+		Text:     result.Text,
+		ParentID: result.ParentID,
+		User: dto.UserResponse{
+			ID:       result.UserID.String(),
+			Name:     result.User.Name,
+			Bio:      result.User.Bio,
+			UserName: result.User.Username,
+			ImageUrl: result.User.ImageUrl,
+		},
+	}, nil
 }

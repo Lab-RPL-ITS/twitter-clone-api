@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Lab-RPL-ITS/twitter-clone-api/dto"
@@ -15,6 +16,7 @@ type (
 		CreatePost(ctx *gin.Context)
 		GetPostById(ctx *gin.Context)
 		DeletePostById(ctx *gin.Context)
+		UpdatePostById(ctx *gin.Context)
 	}
 
 	postController struct {
@@ -37,6 +39,8 @@ func (c *postController) CreatePost(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
+
+	fmt.Println("userId", userId)
 
 	result, err := c.postService.CreatePost(ctx.Request.Context(), userId, post)
 	if err != nil {
@@ -79,5 +83,33 @@ func (c *postController) DeletePostById(ctx *gin.Context) {
 	err = c.postService.DeletePostById(ctx.Request.Context(), postId)
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_POST, nil)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *postController) UpdatePostById(ctx *gin.Context) {
+	var post dto.PostUpdateRequest
+	userId := ctx.GetString("user_id")
+
+	if err := ctx.ShouldBind(&post); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	postId, err := uuid.Parse(ctx.Param("post_id"))
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_ID, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	result, err := c.postService.UpdatePostById(ctx.Request.Context(), userId, postId, post)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_POST, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_UPDATE_POST, result)
 	ctx.JSON(http.StatusOK, res)
 }
