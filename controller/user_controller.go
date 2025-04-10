@@ -14,6 +14,7 @@ type (
 		Register(ctx *gin.Context)
 		Login(ctx *gin.Context)
 		Me(ctx *gin.Context)
+		GetUserByUsername(ctx *gin.Context)
 	}
 
 	userController struct {
@@ -76,5 +77,24 @@ func (c *userController) Login(ctx *gin.Context) {
 	}
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_LOGIN, result)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *userController) GetUserByUsername(ctx *gin.Context) {
+	username := ctx.Param("username")
+	if username == "" {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, dto.ErrUsernameNotFound.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	result, err := c.userService.GetUserByUsername(ctx.Request.Context(), username)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_USER, result)
 	ctx.JSON(http.StatusOK, res)
 }

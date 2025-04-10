@@ -17,6 +17,7 @@ type (
 		Register(ctx context.Context, req dto.UserCreateRequest) (dto.UserResponse, error)
 		GetUserById(ctx context.Context, userId string) (dto.UserResponse, error)
 		Verify(ctx context.Context, req dto.UserLoginRequest) (dto.UserLoginResponse, error)
+		GetUserByUsername(ctx context.Context, username string) (dto.UserResponse, error)
 	}
 
 	userService struct {
@@ -103,5 +104,20 @@ func (s *userService) Verify(ctx context.Context, req dto.UserLoginRequest) (dto
 
 	return dto.UserLoginResponse{
 		Token: token,
+	}, nil
+}
+
+func (s *userService) GetUserByUsername(ctx context.Context, username string) (dto.UserResponse, error) {
+	user, _, err := s.userRepo.CheckUsername(ctx, nil, username)
+	if err != nil {
+		return dto.UserResponse{}, dto.ErrGetUserById
+	}
+
+	return dto.UserResponse{
+		ID:       user.ID.String(),
+		Name:     user.Name,
+		UserName: user.Username,
+		Bio:      user.Bio,
+		ImageUrl: user.ImageUrl,
 	}, nil
 }
