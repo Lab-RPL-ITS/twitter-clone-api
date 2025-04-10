@@ -30,7 +30,7 @@ func NewUserController(us service.UserService) UserController {
 func (c *userController) Register(ctx *gin.Context) {
 	var user dto.UserCreateRequest
 	if err := ctx.ShouldBind(&user); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
@@ -63,7 +63,7 @@ func (c *userController) Me(ctx *gin.Context) {
 func (c *userController) Login(ctx *gin.Context) {
 	var req dto.UserLoginRequest
 	if err := ctx.ShouldBind(&req); err != nil {
-		response := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
+		response := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}

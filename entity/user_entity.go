@@ -14,6 +14,8 @@ type User struct {
 	Password string    `gorm:"not null" json:"password"`
 	ImageUrl *string   `json:"image_url"`
 
+	Posts []Post `gorm:"foreignkey:UserID" json:"posts,omitempty"`
+
 	Timestamp
 }
 

@@ -7,14 +7,14 @@ import (
 
 const (
 	// Failed
-	MESSAGE_FAILED_GET_DATA_FROM_BODY = "failed get data from body"
-	MESSAGE_FAILED_REGISTER_USER      = "failed create user"
-	MESSAGE_FAILED_TOKEN_NOT_VALID    = "token not valid"
-	MESSAGE_FAILED_TOKEN_NOT_FOUND    = "token not found"
-	MESSAGE_FAILED_GET_USER           = "failed get user"
-	MESSAGE_FAILED_LOGIN              = "failed login"
-	MESSAGE_FAILED_PROSES_REQUEST     = "failed proses request"
-	MESSAGE_FAILED_DENIED_ACCESS      = "denied access"
+	MESSAGE_FAILED_GET_USER_DATA_FROM_BODY = "failed get data from body"
+	MESSAGE_FAILED_REGISTER_USER           = "failed create user"
+	MESSAGE_FAILED_TOKEN_NOT_VALID         = "token not valid"
+	MESSAGE_FAILED_TOKEN_NOT_FOUND         = "token not found"
+	MESSAGE_FAILED_GET_USER                = "failed get user"
+	MESSAGE_FAILED_LOGIN                   = "failed login"
+	MESSAGE_FAILED_PROSES_REQUEST          = "failed proses request"
+	MESSAGE_FAILED_DENIED_ACCESS           = "denied access"
 
 	// Success
 	MESSAGE_SUCCESS_REGISTER_USER = "success create user"
@@ -24,7 +24,7 @@ const (
 
 var (
 	ErrCreateUser            = errors.New("failed to create user")
-	ErrGetUserById           = errors.New("failed to get user by id")
+	ErrGetUserById           = errors.New("user not found")
 	ErrUsernameAlreadyExists = errors.New("username already exist")
 	ErrUsernameNotFound      = errors.New("username not found")
 	ErrPasswordNotMatch      = errors.New("password not match")
