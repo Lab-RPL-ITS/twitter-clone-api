@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/Lab-RPL-ITS/twitter-clone-api/entity"
-	"github.com/google/uuid"
 )
 
 const (
@@ -34,14 +33,14 @@ var (
 
 type (
 	PostCreateRequest struct {
-		Text     string     `json:"text" form:"text" binding:"required"`
-		ParentID *uuid.UUID `json:"parent_id," form:"parent_id"`
+		Text     string  `json:"text" form:"text" binding:"required"`
+		ParentID *uint64 `json:"parent_id," form:"parent_id"`
 	}
 
 	PostResponse struct {
-		ID       string       `json:"id"`
+		ID       uint64       `json:"id"`
 		Text     string       `json:"text"`
-		ParentID *uuid.UUID   `json:"parent_id"`
+		ParentID *uint64      `json:"parent_id"`
 		User     UserResponse `json:"user"`
 	}
 

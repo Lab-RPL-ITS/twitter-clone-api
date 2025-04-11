@@ -1,14 +1,13 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/Lab-RPL-ITS/twitter-clone-api/dto"
 	"github.com/Lab-RPL-ITS/twitter-clone-api/service"
 	"github.com/Lab-RPL-ITS/twitter-clone-api/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type (
@@ -41,8 +40,6 @@ func (c *postController) CreatePost(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println("userId", userId)
-
 	result, err := c.postService.CreatePost(ctx.Request.Context(), userId, post)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_POST, err.Error(), nil)
@@ -53,9 +50,9 @@ func (c *postController) CreatePost(ctx *gin.Context) {
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_CREATE_POST, result)
 	ctx.JSON(http.StatusOK, res)
 }
-
 func (c *postController) GetPostById(ctx *gin.Context) {
-	postId, err := uuid.Parse(ctx.Param("post_id"))
+	postIdStr := ctx.Param("post_id")
+	postId, err := strconv.ParseUint(postIdStr, 10, 64)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_ID, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
@@ -74,7 +71,8 @@ func (c *postController) GetPostById(ctx *gin.Context) {
 }
 
 func (c *postController) DeletePostById(ctx *gin.Context) {
-	postId, err := uuid.Parse(ctx.Param("post_id"))
+	postIdStr := ctx.Param("post_id")
+	postId, err := strconv.ParseUint(postIdStr, 10, 64)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_ID, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
@@ -97,7 +95,8 @@ func (c *postController) UpdatePostById(ctx *gin.Context) {
 		return
 	}
 
-	postId, err := uuid.Parse(ctx.Param("post_id"))
+	postIdStr := ctx.Param("post_id")
+	postId, err := strconv.ParseUint(postIdStr, 10, 64)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_ID, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)

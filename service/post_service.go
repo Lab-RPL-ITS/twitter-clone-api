@@ -12,9 +12,9 @@ import (
 type (
 	PostService interface {
 		CreatePost(ctx context.Context, userId string, req dto.PostCreateRequest) (dto.PostResponse, error)
-		GetPostById(ctx context.Context, postId uuid.UUID) (dto.PostRepliesResponse, error)
-		DeletePostById(ctx context.Context, postId uuid.UUID) error
-		UpdatePostById(ctx context.Context, userId string, postId uuid.UUID, req dto.PostUpdateRequest) (dto.PostResponse, error)
+		GetPostById(ctx context.Context, postId uint64) (dto.PostRepliesResponse, error)
+		DeletePostById(ctx context.Context, postId uint64) error
+		UpdatePostById(ctx context.Context, userId string, postId uint64, req dto.PostUpdateRequest) (dto.PostResponse, error)
 		GetAllPosts(ctx context.Context, req dto.PaginationRequest) (dto.PostPaginationResponse, error)
 	}
 
@@ -58,7 +58,7 @@ func (s *postService) CreatePost(ctx context.Context, userId string, req dto.Pos
 	}
 
 	return dto.PostResponse{
-		ID:       result.ID.String(),
+		ID:       result.ID,
 		Text:     result.Text,
 		ParentID: req.ParentID,
 		User: dto.UserResponse{
@@ -71,7 +71,7 @@ func (s *postService) CreatePost(ctx context.Context, userId string, req dto.Pos
 	}, nil
 }
 
-func (s *postService) GetPostById(ctx context.Context, postId uuid.UUID) (dto.PostRepliesResponse, error) {
+func (s *postService) GetPostById(ctx context.Context, postId uint64) (dto.PostRepliesResponse, error) {
 	post, err := s.postRepo.GetPostById(ctx, nil, postId)
 	if err != nil {
 		return dto.PostRepliesResponse{}, dto.ErrGetPostById
@@ -85,7 +85,7 @@ func (s *postService) GetPostById(ctx context.Context, postId uuid.UUID) (dto.Po
 	var data []dto.PostResponse
 	for _, reply := range replies.Replies {
 		datum := dto.PostResponse{
-			ID:       reply.ID.String(),
+			ID:       reply.ID,
 			Text:     reply.Text,
 			ParentID: reply.ParentID,
 			User: dto.UserResponse{
@@ -102,7 +102,7 @@ func (s *postService) GetPostById(ctx context.Context, postId uuid.UUID) (dto.Po
 
 	return dto.PostRepliesResponse{
 			PostResponse: dto.PostResponse{
-				ID:       post.ID.String(),
+				ID:       post.ID,
 				Text:     post.Text,
 				ParentID: post.ParentID,
 				User: dto.UserResponse{
@@ -124,7 +124,7 @@ func (s *postService) GetPostById(ctx context.Context, postId uuid.UUID) (dto.Po
 		nil
 }
 
-func (s *postService) DeletePostById(ctx context.Context, postId uuid.UUID) error {
+func (s *postService) DeletePostById(ctx context.Context, postId uint64) error {
 	_, err := s.postRepo.GetPostById(ctx, nil, postId)
 	if err != nil {
 		return dto.ErrGetPostById
@@ -137,7 +137,7 @@ func (s *postService) DeletePostById(ctx context.Context, postId uuid.UUID) erro
 	return nil
 }
 
-func (s *postService) UpdatePostById(ctx context.Context, userId string, postId uuid.UUID, req dto.PostUpdateRequest) (dto.PostResponse, error) {
+func (s *postService) UpdatePostById(ctx context.Context, userId string, postId uint64, req dto.PostUpdateRequest) (dto.PostResponse, error) {
 	post, err := s.postRepo.GetPostById(ctx, nil, postId)
 	if err != nil {
 		return dto.PostResponse{}, dto.ErrGetPostById
@@ -155,7 +155,7 @@ func (s *postService) UpdatePostById(ctx context.Context, userId string, postId 
 	}
 
 	return dto.PostResponse{
-		ID:       result.ID.String(),
+		ID:       result.ID,
 		Text:     result.Text,
 		ParentID: result.ParentID,
 		User: dto.UserResponse{
@@ -177,7 +177,7 @@ func (s *postService) GetAllPosts(ctx context.Context, req dto.PaginationRequest
 	var data []dto.PostResponse
 	for _, post := range dataWithPaginate.Posts {
 		datum := dto.PostResponse{
-			ID:       post.ID.String(),
+			ID:       post.ID,
 			Text:     post.Text,
 			ParentID: post.ParentID,
 			User: dto.UserResponse{

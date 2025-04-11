@@ -5,18 +5,17 @@ import (
 
 	"github.com/Lab-RPL-ITS/twitter-clone-api/dto"
 	"github.com/Lab-RPL-ITS/twitter-clone-api/entity"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type (
 	PostRepository interface {
 		CreatePost(ctx context.Context, tx *gorm.DB, post entity.Post) (entity.Post, error)
-		GetPostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID) (entity.Post, error)
-		DeletePostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID) error
-		UpdatePostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID, post entity.Post) (entity.Post, error)
+		GetPostById(ctx context.Context, tx *gorm.DB, postId uint64) (entity.Post, error)
+		DeletePostById(ctx context.Context, tx *gorm.DB, postId uint64) error
+		UpdatePostById(ctx context.Context, tx *gorm.DB, postId uint64, post entity.Post) (entity.Post, error)
 		GetAllPostsWithPagination(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetAllPostsRepositoryResponse, error)
-		GetAllPostRepliesWithPagination(ctx context.Context, tx *gorm.DB, postId uuid.UUID, req dto.PaginationRequest) (dto.GetAllRepliesRepositoryResponse, error)
+		GetAllPostRepliesWithPagination(ctx context.Context, tx *gorm.DB, postId uint64, req dto.PaginationRequest) (dto.GetAllRepliesRepositoryResponse, error)
 	}
 
 	postRepository struct {
@@ -42,7 +41,7 @@ func (r *postRepository) CreatePost(ctx context.Context, tx *gorm.DB, post entit
 	return post, nil
 }
 
-func (r *postRepository) GetPostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID) (entity.Post, error) {
+func (r *postRepository) GetPostById(ctx context.Context, tx *gorm.DB, postId uint64) (entity.Post, error) {
 	if tx == nil {
 		tx = r.db
 	}
@@ -66,7 +65,7 @@ func (r *postRepository) GetPostById(ctx context.Context, tx *gorm.DB, postId uu
 	return post, nil
 }
 
-func (r *postRepository) DeletePostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID) error {
+func (r *postRepository) DeletePostById(ctx context.Context, tx *gorm.DB, postId uint64) error {
 	if tx == nil {
 		tx = r.db
 	}
@@ -78,7 +77,7 @@ func (r *postRepository) DeletePostById(ctx context.Context, tx *gorm.DB, postId
 	return nil
 }
 
-func (r *postRepository) UpdatePostById(ctx context.Context, tx *gorm.DB, postId uuid.UUID, post entity.Post) (entity.Post, error) {
+func (r *postRepository) UpdatePostById(ctx context.Context, tx *gorm.DB, postId uint64, post entity.Post) (entity.Post, error) {
 	if tx == nil {
 		tx = r.db
 	}
@@ -126,7 +125,7 @@ func (r *postRepository) GetAllPostsWithPagination(ctx context.Context, tx *gorm
 	}, err
 }
 
-func (r *postRepository) GetAllPostRepliesWithPagination(ctx context.Context, tx *gorm.DB, postId uuid.UUID, req dto.PaginationRequest) (dto.GetAllRepliesRepositoryResponse, error) {
+func (r *postRepository) GetAllPostRepliesWithPagination(ctx context.Context, tx *gorm.DB, postId uint64, req dto.PaginationRequest) (dto.GetAllRepliesRepositoryResponse, error) {
 	if tx == nil {
 		tx = r.db
 	}
