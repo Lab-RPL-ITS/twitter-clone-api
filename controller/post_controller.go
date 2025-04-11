@@ -50,6 +50,7 @@ func (c *postController) CreatePost(ctx *gin.Context) {
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_CREATE_POST, result)
 	ctx.JSON(http.StatusOK, res)
 }
+
 func (c *postController) GetPostById(ctx *gin.Context) {
 	postIdStr := ctx.Param("post_id")
 	postId, err := strconv.ParseUint(postIdStr, 10, 64)
@@ -66,7 +67,13 @@ func (c *postController) GetPostById(ctx *gin.Context) {
 		return
 	}
 
-	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_POST_BY_ID, result)
+	res := utils.Response{
+		Status:  true,
+		Message: dto.MESSAGE_SUCCESS_GET_POST_BY_ID,
+		Data:    result.Data,
+		Meta:    result.PaginationResponse,
+	}
+
 	ctx.JSON(http.StatusOK, res)
 }
 

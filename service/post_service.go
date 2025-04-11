@@ -12,7 +12,7 @@ import (
 type (
 	PostService interface {
 		CreatePost(ctx context.Context, userId string, req dto.PostCreateRequest) (dto.PostResponse, error)
-		GetPostById(ctx context.Context, postId uint64) (dto.PostRepliesResponse, error)
+		GetPostById(ctx context.Context, postId uint64) (dto.PostRepliesPaginationResponse, error)
 		DeletePostById(ctx context.Context, postId uint64) error
 		UpdatePostById(ctx context.Context, userId string, postId uint64, req dto.PostUpdateRequest) (dto.PostResponse, error)
 		GetAllPosts(ctx context.Context, req dto.PaginationRequest) (dto.PostPaginationResponse, error)
@@ -71,15 +71,15 @@ func (s *postService) CreatePost(ctx context.Context, userId string, req dto.Pos
 	}, nil
 }
 
-func (s *postService) GetPostById(ctx context.Context, postId uint64) (dto.PostRepliesResponse, error) {
+func (s *postService) GetPostById(ctx context.Context, postId uint64) (dto.PostRepliesPaginationResponse, error) {
 	post, err := s.postRepo.GetPostById(ctx, nil, postId)
 	if err != nil {
-		return dto.PostRepliesResponse{}, dto.ErrGetPostById
+		return dto.PostRepliesPaginationResponse{}, dto.ErrGetPostById
 	}
 
 	replies, err := s.postRepo.GetAllPostRepliesWithPagination(ctx, nil, postId, dto.PaginationRequest{})
 	if err != nil {
-		return dto.PostRepliesResponse{}, dto.ErrGetPostReplies
+		return dto.PostRepliesPaginationResponse{}, dto.ErrGetPostReplies
 	}
 
 	var data []dto.PostResponse
@@ -100,28 +100,27 @@ func (s *postService) GetPostById(ctx context.Context, postId uint64) (dto.PostR
 		data = append(data, datum)
 	}
 
-	return dto.PostRepliesResponse{
-			PostResponse: dto.PostResponse{
-				ID:       post.ID,
-				Text:     post.Text,
-				ParentID: post.ParentID,
-				User: dto.UserResponse{
-					ID:       post.UserID.String(),
-					Name:     post.User.Name,
-					Bio:      post.User.Bio,
-					UserName: post.User.Username,
-					ImageUrl: post.User.ImageUrl,
-				},
+	return dto.PostRepliesPaginationResponse{
+		Data: dto.PostResponse{
+			ID:       post.ID,
+			Text:     post.Text,
+			ParentID: post.ParentID,
+			User: dto.UserResponse{
+				ID:       post.UserID.String(),
+				Name:     post.User.Name,
+				Bio:      post.User.Bio,
+				UserName: post.User.Username,
+				ImageUrl: post.User.ImageUrl,
 			},
 			Replies: data,
-			PaginationResponse: dto.PaginationResponse{
-				Page:    replies.Page,
-				PerPage: replies.PerPage,
-				MaxPage: replies.MaxPage,
-				Count:   replies.Count,
-			},
 		},
-		nil
+		PaginationResponse: dto.PaginationResponse{
+			Page:    replies.Page,
+			PerPage: replies.PerPage,
+			MaxPage: replies.MaxPage,
+			Count:   replies.Count,
+		},
+	}, nil
 }
 
 func (s *postService) DeletePostById(ctx context.Context, postId uint64) error {
