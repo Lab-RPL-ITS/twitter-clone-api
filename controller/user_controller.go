@@ -149,7 +149,7 @@ func (c *userController) GetUserPosts(ctx *gin.Context) {
 		return
 	}
 
-	var req dto.PaginationRequest
+	var req dto.UserPostsPaginationRequest
 	if err := ctx.ShouldBind(&req); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)

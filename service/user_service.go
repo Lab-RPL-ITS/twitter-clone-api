@@ -19,7 +19,7 @@ type (
 		Verify(ctx context.Context, req dto.UserLoginRequest) (dto.UserLoginResponse, error)
 		GetUserByUsername(ctx context.Context, username string) (dto.UserResponse, error)
 		UpdateUser(ctx context.Context, userId string, req dto.UserProfileUpdateRequest) (dto.UserResponse, error)
-		GetUserPosts(ctx context.Context, username string, req dto.PaginationRequest) (dto.PostPaginationResponse, error)
+		GetUserPosts(ctx context.Context, username string, req dto.UserPostsPaginationRequest) (dto.PostPaginationResponse, error)
 	}
 
 	userService struct {
@@ -165,7 +165,7 @@ func (s *userService) UpdateUser(ctx context.Context, userId string, req dto.Use
 	}, nil
 }
 
-func (s *userService) GetUserPosts(ctx context.Context, username string, req dto.PaginationRequest) (dto.PostPaginationResponse, error) {
+func (s *userService) GetUserPosts(ctx context.Context, username string, req dto.UserPostsPaginationRequest) (dto.PostPaginationResponse, error) {
 	dataWithPaginate, err := s.postRepo.GetAllPostsWithPaginationByUsername(ctx, nil, username, req)
 	if err != nil {
 		return dto.PostPaginationResponse{}, err

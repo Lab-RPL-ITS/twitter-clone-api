@@ -70,4 +70,9 @@ type (
 	CheckUsernameRequest struct {
 		UserName string `json:"username" form:"username" binding:"required"`
 	}
+
+	UserPostsPaginationRequest struct {
+		PaginationRequest
+		IsLiked bool `form:"is_liked"`
+	}
 )
