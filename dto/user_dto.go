@@ -35,7 +35,7 @@ type (
 	UserCreateRequest struct {
 		Name     string                `json:"name" form:"name" binding:"required"`
 		UserName string                `json:"username" form:"username" binding:"required"`
-		Bio      string                `json:"bio" form:"bio" binding:"required"`
+		Bio      string                `json:"bio" form:"bio"`
 		Image    *multipart.FileHeader `json:"image" form:"image"`
 		Password string                `json:"password" form:"password" binding:"required"`
 	}
@@ -44,7 +44,7 @@ type (
 		ID       string  `json:"id"`
 		Name     string  `json:"name"`
 		UserName string  `json:"username"`
-		Bio      string  `json:"bio"`
+		Bio      *string `json:"bio"`
 		ImageUrl *string `json:"image_url"`
 	}
 

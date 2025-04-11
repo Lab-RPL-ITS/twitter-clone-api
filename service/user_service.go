@@ -52,11 +52,17 @@ func (s *userService) Register(ctx context.Context, req dto.UserCreateRequest) (
 		filenamePtr = &filename
 	}
 
+	var bioPtr *string
+	if req.Bio != "" {
+		bio := req.Bio
+		bioPtr = &bio
+	}
+
 	user := entity.User{
 		Name:     req.Name,
 		Username: req.UserName,
 		ImageUrl: filenamePtr,
-		Bio:      req.Bio,
+		Bio:      bioPtr,
 		Password: req.Password,
 	}
 
