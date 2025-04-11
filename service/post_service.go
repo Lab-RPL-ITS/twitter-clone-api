@@ -58,9 +58,10 @@ func (s *postService) CreatePost(ctx context.Context, userId string, req dto.Pos
 	}
 
 	return dto.PostResponse{
-		ID:       result.ID,
-		Text:     result.Text,
-		ParentID: req.ParentID,
+		ID:         result.ID,
+		Text:       result.Text,
+		TotalLikes: result.TotalLikes,
+		ParentID:   req.ParentID,
 		User: dto.UserResponse{
 			ID:       user.ID.String(),
 			Name:     user.Name,
@@ -85,9 +86,10 @@ func (s *postService) GetPostById(ctx context.Context, postId uint64) (dto.PostR
 	var data []dto.PostResponse
 	for _, reply := range replies.Replies {
 		datum := dto.PostResponse{
-			ID:       reply.ID,
-			Text:     reply.Text,
-			ParentID: reply.ParentID,
+			ID:         reply.ID,
+			Text:       reply.Text,
+			TotalLikes: reply.TotalLikes,
+			ParentID:   reply.ParentID,
 			User: dto.UserResponse{
 				ID:       reply.UserID.String(),
 				Name:     reply.User.Name,
@@ -102,9 +104,10 @@ func (s *postService) GetPostById(ctx context.Context, postId uint64) (dto.PostR
 
 	return dto.PostRepliesPaginationResponse{
 		Data: dto.PostResponse{
-			ID:       post.ID,
-			Text:     post.Text,
-			ParentID: post.ParentID,
+			ID:         post.ID,
+			Text:       post.Text,
+			TotalLikes: post.TotalLikes,
+			ParentID:   post.ParentID,
 			User: dto.UserResponse{
 				ID:       post.UserID.String(),
 				Name:     post.User.Name,
@@ -154,9 +157,10 @@ func (s *postService) UpdatePostById(ctx context.Context, userId string, postId 
 	}
 
 	return dto.PostResponse{
-		ID:       result.ID,
-		Text:     result.Text,
-		ParentID: result.ParentID,
+		ID:         result.ID,
+		Text:       result.Text,
+		TotalLikes: result.TotalLikes,
+		ParentID:   result.ParentID,
 		User: dto.UserResponse{
 			ID:       result.UserID.String(),
 			Name:     result.User.Name,
@@ -176,9 +180,10 @@ func (s *postService) GetAllPosts(ctx context.Context, req dto.PaginationRequest
 	var data []dto.PostResponse
 	for _, post := range dataWithPaginate.Posts {
 		datum := dto.PostResponse{
-			ID:       post.ID,
-			Text:     post.Text,
-			ParentID: post.ParentID,
+			ID:         post.ID,
+			Text:       post.Text,
+			TotalLikes: post.TotalLikes,
+			ParentID:   post.ParentID,
 			User: dto.UserResponse{
 				ID:       post.UserID.String(),
 				Name:     post.User.Name,

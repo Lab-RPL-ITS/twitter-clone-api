@@ -23,4 +23,5 @@ func RegisterDependencies(injector *do.Injector) {
 
 	ProvideUserDependencies(injector)
 	ProvidePostDependencies(injector)
+	ProvideLikesDependencies(injector)
 }

@@ -16,6 +16,7 @@ type (
 		UpdatePostById(ctx context.Context, tx *gorm.DB, postId uint64, post entity.Post) (entity.Post, error)
 		GetAllPostsWithPagination(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetAllPostsRepositoryResponse, error)
 		GetAllPostRepliesWithPagination(ctx context.Context, tx *gorm.DB, postId uint64, req dto.PaginationRequest) (dto.GetAllRepliesRepositoryResponse, error)
+		UpdateLikesCount(ctx context.Context, tx *gorm.DB, postId uint64, count int) error
 	}
 
 	postRepository struct {
@@ -159,4 +160,16 @@ func (r *postRepository) GetAllPostRepliesWithPagination(ctx context.Context, tx
 			MaxPage: totalPage,
 		},
 	}, err
+}
+
+func (r *postRepository) UpdateLikesCount(ctx context.Context, tx *gorm.DB, postId uint64, count int) error {
+	if tx == nil {
+		tx = r.db
+	}
+
+	if err := tx.WithContext(ctx).Model(&entity.Post{}).Where("id = ?", postId).UpdateColumn("total_likes", gorm.Expr("total_likes + ?", count)).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -38,11 +38,12 @@ type (
 	}
 
 	PostResponse struct {
-		ID       uint64         `json:"id"`
-		Text     string         `json:"text"`
-		ParentID *uint64        `json:"parent_id"`
-		User     UserResponse   `json:"user"`
-		Replies  []PostResponse `json:"replies,omitempty"`
+		ID         uint64         `json:"id"`
+		Text       string         `json:"text"`
+		TotalLikes uint64         `json:"total_likes"`
+		ParentID   *uint64        `json:"parent_id"`
+		User       UserResponse   `json:"user"`
+		Replies    []PostResponse `json:"replies,omitempty"`
 	}
 
 	PostUpdateRequest struct {

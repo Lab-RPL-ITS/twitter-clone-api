@@ -8,4 +8,5 @@ import (
 func RegisterRoutes(server *gin.Engine, injector *do.Injector) {
 	User(server, injector)
 	Post(server, injector)
+	Likes(server, injector)
 }
