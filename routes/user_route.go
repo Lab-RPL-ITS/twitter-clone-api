@@ -18,6 +18,7 @@ func User(route *gin.Engine, injector *do.Injector) {
 		// User
 		routes.POST("/register", userController.Register)
 		routes.POST("/login", userController.Login)
+		routes.POST("/check-username", userController.CheckUsername)
 		routes.GET("/me", middleware.Authenticate(jwtService), userController.Me)
 		routes.GET("/:username", userController.GetUserByUsername)
 		routes.PATCH("/update", middleware.Authenticate(jwtService), userController.UpdateUser)

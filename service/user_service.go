@@ -98,7 +98,7 @@ func (s *userService) Verify(ctx context.Context, req dto.UserLoginRequest) (dto
 func (s *userService) GetUserByUsername(ctx context.Context, username string) (dto.UserResponse, error) {
 	user, _, err := s.userRepo.CheckUsername(ctx, nil, username)
 	if err != nil {
-		return dto.UserResponse{}, dto.ErrGetUserById
+		return dto.UserResponse{}, dto.ErrUsernameNotFound
 	}
 
 	return dto.UserResponse{

@@ -16,6 +16,7 @@ type (
 		Me(ctx *gin.Context)
 		GetUserByUsername(ctx *gin.Context)
 		UpdateUser(ctx *gin.Context)
+		CheckUsername(ctx *gin.Context)
 	}
 
 	userController struct {
@@ -118,4 +119,23 @@ func (c *userController) UpdateUser(ctx *gin.Context) {
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_UPDATE_USER, result)
 	ctx.JSON(http.StatusOK, res)
+}
+
+func (c *userController) CheckUsername(ctx *gin.Context) {
+	var username dto.CheckUsernameRequest
+	if err := ctx.ShouldBind(&username); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	_, err := c.userService.GetUserByUsername(ctx.Request.Context(), username.UserName)
+	if err != nil && err.Error() == dto.ErrUsernameNotFound.Error() {
+		res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_USERNAME_AVAILABLE, nil)
+		ctx.JSON(http.StatusOK, res)
+		return
+	}
+
+	res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_USERNAME_EXISTS, dto.ErrUsernameAlreadyExists.Error(), nil)
+	ctx.JSON(http.StatusBadRequest, res)
 }

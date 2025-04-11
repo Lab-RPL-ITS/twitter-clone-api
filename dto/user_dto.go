@@ -16,12 +16,14 @@ const (
 	MESSAGE_FAILED_PROSES_REQUEST          = "failed proses request"
 	MESSAGE_FAILED_DENIED_ACCESS           = "denied access"
 	MESSAGE_FAILED_UPDATE_USER             = "failed update user"
+	MESSAGE_FAILED_USERNAME_EXISTS         = "failed get username"
 
 	// Success
-	MESSAGE_SUCCESS_REGISTER_USER = "success create user"
-	MESSAGE_SUCCESS_GET_USER      = "success get user"
-	MESSAGE_SUCCESS_LOGIN         = "success login"
-	MESSAGE_SUCCESS_UPDATE_USER   = "success update user"
+	MESSAGE_SUCCESS_REGISTER_USER      = "success create user"
+	MESSAGE_SUCCESS_GET_USER           = "success get user"
+	MESSAGE_SUCCESS_LOGIN              = "success login"
+	MESSAGE_SUCCESS_UPDATE_USER        = "success update user"
+	MESSAGE_SUCCESS_USERNAME_AVAILABLE = "username available"
 )
 
 var (
@@ -61,5 +63,9 @@ type (
 
 	UserLoginResponse struct {
 		Token string `json:"token"`
+	}
+
+	CheckUsernameRequest struct {
+		UserName string `json:"username" form:"username" binding:"required"`
 	}
 )
