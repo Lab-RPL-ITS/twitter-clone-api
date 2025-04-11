@@ -12,7 +12,7 @@ import (
 type (
 	PostService interface {
 		CreatePost(ctx context.Context, userId string, req dto.PostCreateRequest) (dto.PostResponse, error)
-		GetPostById(ctx context.Context, postId uint64) (dto.PostRepliesPaginationResponse, error)
+		GetPostById(ctx context.Context, postId uint64, req dto.PaginationRequest) (dto.PostRepliesPaginationResponse, error)
 		DeletePostById(ctx context.Context, postId uint64) error
 		UpdatePostById(ctx context.Context, userId string, postId uint64, req dto.PostUpdateRequest) (dto.PostResponse, error)
 		GetAllPosts(ctx context.Context, req dto.PaginationRequest) (dto.PostPaginationResponse, error)
@@ -72,13 +72,13 @@ func (s *postService) CreatePost(ctx context.Context, userId string, req dto.Pos
 	}, nil
 }
 
-func (s *postService) GetPostById(ctx context.Context, postId uint64) (dto.PostRepliesPaginationResponse, error) {
+func (s *postService) GetPostById(ctx context.Context, postId uint64, req dto.PaginationRequest) (dto.PostRepliesPaginationResponse, error) {
 	post, err := s.postRepo.GetPostById(ctx, nil, postId)
 	if err != nil {
 		return dto.PostRepliesPaginationResponse{}, dto.ErrGetPostById
 	}
 
-	replies, err := s.postRepo.GetAllPostRepliesWithPagination(ctx, nil, postId, dto.PaginationRequest{})
+	replies, err := s.postRepo.GetAllPostRepliesWithPagination(ctx, nil, postId, req)
 	if err != nil {
 		return dto.PostRepliesPaginationResponse{}, dto.ErrGetPostReplies
 	}

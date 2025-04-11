@@ -52,6 +52,13 @@ func (c *postController) CreatePost(ctx *gin.Context) {
 }
 
 func (c *postController) GetPostById(ctx *gin.Context) {
+	var req dto.PaginationRequest
+	if err := ctx.ShouldBind(&req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
 	postIdStr := ctx.Param("post_id")
 	postId, err := strconv.ParseUint(postIdStr, 10, 64)
 	if err != nil {
@@ -60,7 +67,7 @@ func (c *postController) GetPostById(ctx *gin.Context) {
 		return
 	}
 
-	result, err := c.postService.GetPostById(ctx.Request.Context(), postId)
+	result, err := c.postService.GetPostById(ctx.Request.Context(), postId, req)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_ID, err.Error(), nil)
 		ctx.JSON(http.StatusBadRequest, res)
