@@ -102,7 +102,7 @@ func (r *postRepository) GetAllPostsWithPagination(ctx context.Context, tx *gorm
 
 	req.Default()
 
-	query := tx.WithContext(ctx).Model(&entity.Post{}).Joins("User").Where("posts.parent_id IS NULL").Order("created_at DESC")
+	query := tx.WithContext(ctx).Model(&entity.Post{}).Joins("User").Unscoped().Where("posts.parent_id IS NULL").Order("created_at DESC")
 	if req.Search != "" {
 		query = query.Where("text LIKE ?", "%"+req.Search+"%")
 	}
@@ -138,7 +138,7 @@ func (r *postRepository) GetAllPostRepliesWithPagination(ctx context.Context, tx
 
 	req.Default()
 
-	query := tx.WithContext(ctx).Model(&entity.Post{}).Joins("User").Where("posts.parent_id = ?", postId).Order("created_at DESC")
+	query := tx.WithContext(ctx).Model(&entity.Post{}).Joins("User").Unscoped().Where("posts.parent_id = ?", postId).Order("created_at DESC")
 	if req.Search != "" {
 		query = query.Where("text LIKE ?", "%"+req.Search+"%")
 	}
@@ -147,7 +147,7 @@ func (r *postRepository) GetAllPostRepliesWithPagination(ctx context.Context, tx
 		return dto.GetAllRepliesRepositoryResponse{}, err
 	}
 
-	if err := query.Scopes(Paginate(req)).Find(&replies).Error; err != nil {
+	if err := query.Scopes(Paginate(req)).Unscoped().Find(&replies).Error; err != nil {
 		return dto.GetAllRepliesRepositoryResponse{}, err
 	}
 
@@ -186,7 +186,7 @@ func (r *postRepository) GetAllPostsWithPaginationByUsername(ctx context.Context
 
 	req.Default()
 
-	query := tx.WithContext(ctx).Model(&entity.Post{}).Joins("User").Where("posts.parent_id IS NULL").Where("\"User\".username = ?", username)
+	query := tx.WithContext(ctx).Model(&entity.Post{}).Joins("User").Unscoped().Where("posts.parent_id IS NULL").Where("\"User\".username = ?", username)
 	if req.IsLiked {
 		query = query.Joins("INNER JOIN likes ON likes.post_id = posts.id AND likes.user_id = posts.user_id")
 	}
@@ -203,7 +203,7 @@ func (r *postRepository) GetAllPostsWithPaginationByUsername(ctx context.Context
 	if err := query.Scopes(Paginate(dto.PaginationRequest{
 		Page:    req.Page,
 		PerPage: req.PerPage,
-	})).Find(&posts).Error; err != nil {
+	})).Unscoped().Find(&posts).Error; err != nil {
 		return dto.GetAllPostsRepositoryResponse{}, err
 	}
 

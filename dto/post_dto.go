@@ -38,12 +38,17 @@ type (
 	}
 
 	PostResponse struct {
-		ID         uint64         `json:"id"`
-		Text       string         `json:"text"`
-		TotalLikes uint64         `json:"total_likes"`
-		ParentID   *uint64        `json:"parent_id"`
-		User       UserResponse   `json:"user"`
-		Replies    []PostResponse `json:"replies,omitempty"`
+		ID         uint64       `json:"id"`
+		Text       string       `json:"text"`
+		TotalLikes uint64       `json:"total_likes"`
+		ParentID   *uint64      `json:"parent_id"`
+		IsDeleted  bool         `json:"is_deleted"`
+		User       UserResponse `json:"user"`
+	}
+
+	PostWithRepliesResponse struct {
+		PostResponse
+		Replies []PostResponse `json:"replies"`
 	}
 
 	PostUpdateRequest struct {
@@ -56,7 +61,7 @@ type (
 	}
 
 	PostRepliesPaginationResponse struct {
-		Data PostResponse `json:"data"`
+		Data PostWithRepliesResponse `json:"data"`
 		PaginationResponse
 	}
 

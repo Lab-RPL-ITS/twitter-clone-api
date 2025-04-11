@@ -57,10 +57,21 @@ func (s *postService) CreatePost(ctx context.Context, userId string, req dto.Pos
 		return dto.PostResponse{}, dto.ErrGetUserById
 	}
 
+	if result.DeletedAt.Valid {
+		return dto.PostResponse{
+			ID:         result.ID,
+			Text:       "",
+			TotalLikes: 0,
+			IsDeleted:  result.DeletedAt.Valid,
+			ParentID:   req.ParentID,
+		}, nil
+	}
+
 	return dto.PostResponse{
 		ID:         result.ID,
 		Text:       result.Text,
 		TotalLikes: result.TotalLikes,
+		IsDeleted:  result.DeletedAt.Valid,
 		ParentID:   req.ParentID,
 		User: dto.UserResponse{
 			ID:       user.ID.String(),
@@ -89,6 +100,7 @@ func (s *postService) GetPostById(ctx context.Context, postId uint64, req dto.Pa
 			ID:         reply.ID,
 			Text:       reply.Text,
 			TotalLikes: reply.TotalLikes,
+			IsDeleted:  reply.DeletedAt.Valid,
 			ParentID:   reply.ParentID,
 			User: dto.UserResponse{
 				ID:       reply.UserID.String(),
@@ -102,18 +114,25 @@ func (s *postService) GetPostById(ctx context.Context, postId uint64, req dto.Pa
 		data = append(data, datum)
 	}
 
+	if data == nil {
+		data = make([]dto.PostResponse, 0)
+	}
+
 	return dto.PostRepliesPaginationResponse{
-		Data: dto.PostResponse{
-			ID:         post.ID,
-			Text:       post.Text,
-			TotalLikes: post.TotalLikes,
-			ParentID:   post.ParentID,
-			User: dto.UserResponse{
-				ID:       post.UserID.String(),
-				Name:     post.User.Name,
-				Bio:      post.User.Bio,
-				UserName: post.User.Username,
-				ImageUrl: post.User.ImageUrl,
+		Data: dto.PostWithRepliesResponse{
+			PostResponse: dto.PostResponse{
+				ID:         post.ID,
+				Text:       post.Text,
+				TotalLikes: post.TotalLikes,
+				IsDeleted:  post.DeletedAt.Valid,
+				ParentID:   post.ParentID,
+				User: dto.UserResponse{
+					ID:       post.UserID.String(),
+					Name:     post.User.Name,
+					Bio:      post.User.Bio,
+					UserName: post.User.Username,
+					ImageUrl: post.User.ImageUrl,
+				},
 			},
 			Replies: data,
 		},
@@ -160,6 +179,7 @@ func (s *postService) UpdatePostById(ctx context.Context, userId string, postId 
 		ID:         result.ID,
 		Text:       result.Text,
 		TotalLikes: result.TotalLikes,
+		IsDeleted:  result.DeletedAt.Valid,
 		ParentID:   result.ParentID,
 		User: dto.UserResponse{
 			ID:       result.UserID.String(),
@@ -183,6 +203,7 @@ func (s *postService) GetAllPosts(ctx context.Context, req dto.PaginationRequest
 			ID:         post.ID,
 			Text:       post.Text,
 			TotalLikes: post.TotalLikes,
+			IsDeleted:  post.DeletedAt.Valid,
 			ParentID:   post.ParentID,
 			User: dto.UserResponse{
 				ID:       post.UserID.String(),

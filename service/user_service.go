@@ -177,6 +177,7 @@ func (s *userService) GetUserPosts(ctx context.Context, username string, req dto
 			ID:         post.ID,
 			Text:       post.Text,
 			TotalLikes: post.TotalLikes,
+			IsDeleted:  post.DeletedAt.Valid,
 			ParentID:   post.ParentID,
 			User: dto.UserResponse{
 				ID:       post.UserID.String(),
