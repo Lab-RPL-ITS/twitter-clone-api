@@ -19,17 +19,20 @@ type (
 		Verify(ctx context.Context, req dto.UserLoginRequest) (dto.UserLoginResponse, error)
 		GetUserByUsername(ctx context.Context, username string) (dto.UserResponse, error)
 		UpdateUser(ctx context.Context, userId string, req dto.UserProfileUpdateRequest) (dto.UserResponse, error)
+		GetUserPosts(ctx context.Context, username string, req dto.PaginationRequest) (dto.PostPaginationResponse, error)
 	}
 
 	userService struct {
 		userRepo   repository.UserRepository
+		postRepo   repository.PostRepository
 		jwtService JWTService
 	}
 )
 
-func NewUserService(userRepo repository.UserRepository, jwtService JWTService) UserService {
+func NewUserService(userRepo repository.UserRepository, postRepo repository.PostRepository, jwtService JWTService) UserService {
 	return &userService{
 		userRepo:   userRepo,
+		postRepo:   postRepo,
 		jwtService: jwtService,
 	}
 }
@@ -159,5 +162,41 @@ func (s *userService) UpdateUser(ctx context.Context, userId string, req dto.Use
 		UserName: userUpdate.Username,
 		Bio:      userUpdate.Bio,
 		ImageUrl: userUpdate.ImageUrl,
+	}, nil
+}
+
+func (s *userService) GetUserPosts(ctx context.Context, username string, req dto.PaginationRequest) (dto.PostPaginationResponse, error) {
+	dataWithPaginate, err := s.postRepo.GetAllPostsWithPaginationByUsername(ctx, nil, username, req)
+	if err != nil {
+		return dto.PostPaginationResponse{}, err
+	}
+
+	var data []dto.PostResponse
+	for _, post := range dataWithPaginate.Posts {
+		datum := dto.PostResponse{
+			ID:         post.ID,
+			Text:       post.Text,
+			TotalLikes: post.TotalLikes,
+			ParentID:   post.ParentID,
+			User: dto.UserResponse{
+				ID:       post.UserID.String(),
+				Name:     post.User.Name,
+				Bio:      post.User.Bio,
+				UserName: post.User.Username,
+				ImageUrl: post.User.ImageUrl,
+			},
+		}
+
+		data = append(data, datum)
+	}
+
+	return dto.PostPaginationResponse{
+		Data: data,
+		PaginationResponse: dto.PaginationResponse{
+			Page:    dataWithPaginate.Page,
+			PerPage: dataWithPaginate.PerPage,
+			MaxPage: dataWithPaginate.MaxPage,
+			Count:   dataWithPaginate.Count,
+		},
 	}, nil
 }

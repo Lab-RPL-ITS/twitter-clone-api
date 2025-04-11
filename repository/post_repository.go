@@ -15,6 +15,7 @@ type (
 		DeletePostById(ctx context.Context, tx *gorm.DB, postId uint64) error
 		UpdatePostById(ctx context.Context, tx *gorm.DB, postId uint64, post entity.Post) (entity.Post, error)
 		GetAllPostsWithPagination(ctx context.Context, tx *gorm.DB, req dto.PaginationRequest) (dto.GetAllPostsRepositoryResponse, error)
+		GetAllPostsWithPaginationByUsername(ctx context.Context, tx *gorm.DB, username string, req dto.PaginationRequest) (dto.GetAllPostsRepositoryResponse, error)
 		GetAllPostRepliesWithPagination(ctx context.Context, tx *gorm.DB, postId uint64, req dto.PaginationRequest) (dto.GetAllRepliesRepositoryResponse, error)
 		UpdateLikesCount(ctx context.Context, tx *gorm.DB, postId uint64, count int) error
 	}
@@ -172,4 +173,40 @@ func (r *postRepository) UpdateLikesCount(ctx context.Context, tx *gorm.DB, post
 	}
 
 	return nil
+}
+
+func (r *postRepository) GetAllPostsWithPaginationByUsername(ctx context.Context, tx *gorm.DB, username string, req dto.PaginationRequest) (dto.GetAllPostsRepositoryResponse, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var posts []entity.Post
+	var err error
+	var count int64
+
+	req.Default()
+
+	query := tx.WithContext(ctx).Model(&entity.Post{}).Joins("User").Where("posts.parent_id IS NULL").Where("\"User\".username = ?", username).Order("created_at DESC")
+	if req.Search != "" {
+		query = query.Where("text LIKE ?", "%"+req.Search+"%")
+	}
+
+	if err := query.Count(&count).Error; err != nil {
+		return dto.GetAllPostsRepositoryResponse{}, err
+	}
+
+	if err := query.Scopes(Paginate(req)).Find(&posts).Error; err != nil {
+		return dto.GetAllPostsRepositoryResponse{}, err
+	}
+
+	totalPage := TotalPage(count, int64(req.PerPage))
+	return dto.GetAllPostsRepositoryResponse{
+		Posts: posts,
+		PaginationResponse: dto.PaginationResponse{
+			Page:    req.Page,
+			PerPage: req.PerPage,
+			Count:   count,
+			MaxPage: totalPage,
+		},
+	}, err
 }

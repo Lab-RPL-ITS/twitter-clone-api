@@ -15,9 +15,10 @@ func ProvideUserDependencies(injector *do.Injector) {
 
 	// Repository
 	userRepository := repository.NewUserRepository(db)
+	postRepository := repository.NewPostRepository(db)
 
 	// Service
-	userService := service.NewUserService(userRepository, jwtService)
+	userService := service.NewUserService(userRepository, postRepository, jwtService)
 
 	// Controller
 	do.Provide(injector, func(i *do.Injector) (controller.UserController, error) {

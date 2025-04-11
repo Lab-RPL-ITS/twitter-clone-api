@@ -17,6 +17,7 @@ type (
 		GetUserByUsername(ctx *gin.Context)
 		UpdateUser(ctx *gin.Context)
 		CheckUsername(ctx *gin.Context)
+		GetUserPosts(ctx *gin.Context)
 	}
 
 	userController struct {
@@ -138,4 +139,36 @@ func (c *userController) CheckUsername(ctx *gin.Context) {
 
 	res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_USERNAME_EXISTS, dto.ErrUsernameAlreadyExists.Error(), nil)
 	ctx.JSON(http.StatusBadRequest, res)
+}
+
+func (c *userController) GetUserPosts(ctx *gin.Context) {
+	username := ctx.Param("username")
+	if username == "" {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, dto.ErrUsernameNotFound.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	var req dto.PaginationRequest
+	if err := ctx.ShouldBind(&req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_POST_DATA_FROM_BODY, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	result, err := c.userService.GetUserPosts(ctx.Request.Context(), username, req)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER_POSTS, err.Error(), nil)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.Response{
+		Status:  true,
+		Message: dto.MESSAGE_SUCCESS_GET_ALL_POSTS,
+		Data:    result.Data,
+		Meta:    result.PaginationResponse,
+	}
+
+	ctx.JSON(http.StatusOK, res)
 }

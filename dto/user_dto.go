@@ -17,6 +17,7 @@ const (
 	MESSAGE_FAILED_DENIED_ACCESS           = "denied access"
 	MESSAGE_FAILED_UPDATE_USER             = "failed update user"
 	MESSAGE_FAILED_USERNAME_EXISTS         = "failed get username"
+	MESSAGE_FAILED_GET_USER_POSTS          = "failed get user posts"
 
 	// Success
 	MESSAGE_SUCCESS_REGISTER_USER      = "success create user"
@@ -24,6 +25,7 @@ const (
 	MESSAGE_SUCCESS_LOGIN              = "success login"
 	MESSAGE_SUCCESS_UPDATE_USER        = "success update user"
 	MESSAGE_SUCCESS_USERNAME_AVAILABLE = "username available"
+	MESSAGE_SUCCESS_GET_USER_POSTS     = "success get user posts"
 )
 
 var (
