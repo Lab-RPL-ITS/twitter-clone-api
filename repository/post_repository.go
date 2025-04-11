@@ -100,7 +100,7 @@ func (r *postRepository) GetAllPostsWithPagination(ctx context.Context, tx *gorm
 
 	req.Default()
 
-	query := tx.WithContext(ctx).Model(&entity.Post{}).Joins("User")
+	query := tx.WithContext(ctx).Model(&entity.Post{}).Joins("User").Where("posts.parent_id IS NULL").Order("created_at DESC")
 	if req.Search != "" {
 		query = query.Where("text LIKE ?", "%"+req.Search+"%")
 	}
