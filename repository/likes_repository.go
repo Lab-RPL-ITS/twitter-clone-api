@@ -69,7 +69,7 @@ func (r *likesRepository) ErrUnlikePostById(ctx context.Context, tx *gorm.DB, po
 		PostID: postId,
 	}
 
-	if err := tx.WithContext(ctx).Where("user_id = ? AND post_id = ?", userId, postId).Delete(&likes).Error; err != nil {
+	if err := tx.WithContext(ctx).Where("user_id = ? AND post_id = ?", userId, postId).Unscoped().Delete(&likes).Error; err != nil {
 		return err
 	}
 
