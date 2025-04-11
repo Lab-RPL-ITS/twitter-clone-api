@@ -12,6 +12,7 @@ type (
 		RegisterUser(ctx context.Context, tx *gorm.DB, user entity.User) (entity.User, error)
 		GetUserById(ctx context.Context, tx *gorm.DB, userId string) (entity.User, error)
 		CheckUsername(ctx context.Context, tx *gorm.DB, email string) (entity.User, bool, error)
+		UpdateUser(ctx context.Context, tx *gorm.DB, userId string, user entity.User) (entity.User, error)
 	}
 
 	userRepository struct {
@@ -61,4 +62,21 @@ func (r *userRepository) CheckUsername(ctx context.Context, tx *gorm.DB, usernam
 	}
 
 	return user, true, nil
+}
+
+func (r *userRepository) UpdateUser(ctx context.Context, tx *gorm.DB, userId string, user entity.User) (entity.User, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	if err := tx.WithContext(ctx).Model(&user).Where("id = ?", userId).Updates(user).Error; err != nil {
+		return entity.User{}, err
+	}
+
+	var updatedUser entity.User
+	if err := tx.WithContext(ctx).Where("id = ?", userId).Take(&updatedUser).Error; err != nil {
+		return entity.User{}, err
+	}
+
+	return updatedUser, nil
 }

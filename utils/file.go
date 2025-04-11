@@ -48,3 +48,11 @@ func UploadFile(file *multipart.FileHeader, path string) error {
 func GetExtensions(filename string) string {
 	return strings.Split(filename, ".")[len(strings.Split(filename, "."))-1]
 }
+
+func DeleteFile(path string) error {
+	filePath := fmt.Sprintf("%s/%s", PATH, path)
+	if err := os.Remove(filePath); err != nil {
+		return err
+	}
+	return nil
+}

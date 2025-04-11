@@ -15,11 +15,13 @@ const (
 	MESSAGE_FAILED_LOGIN                   = "failed login"
 	MESSAGE_FAILED_PROSES_REQUEST          = "failed proses request"
 	MESSAGE_FAILED_DENIED_ACCESS           = "denied access"
+	MESSAGE_FAILED_UPDATE_USER             = "failed update user"
 
 	// Success
 	MESSAGE_SUCCESS_REGISTER_USER = "success create user"
 	MESSAGE_SUCCESS_GET_USER      = "success get user"
 	MESSAGE_SUCCESS_LOGIN         = "success login"
+	MESSAGE_SUCCESS_UPDATE_USER   = "success update user"
 )
 
 var (
@@ -38,6 +40,12 @@ type (
 		Bio      string                `json:"bio" form:"bio"`
 		Image    *multipart.FileHeader `json:"image" form:"image"`
 		Password string                `json:"password" form:"password" binding:"required"`
+	}
+
+	UserProfileUpdateRequest struct {
+		Name  string                `json:"name" form:"name"`
+		Bio   string                `json:"bio" form:"bio"`
+		Image *multipart.FileHeader `json:"image" form:"image"`
 	}
 
 	UserResponse struct {

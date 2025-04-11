@@ -18,6 +18,7 @@ type (
 		GetUserById(ctx context.Context, userId string) (dto.UserResponse, error)
 		Verify(ctx context.Context, req dto.UserLoginRequest) (dto.UserLoginResponse, error)
 		GetUserByUsername(ctx context.Context, username string) (dto.UserResponse, error)
+		UpdateUser(ctx context.Context, userId string, req dto.UserProfileUpdateRequest) (dto.UserResponse, error)
 	}
 
 	userService struct {
@@ -125,5 +126,57 @@ func (s *userService) GetUserByUsername(ctx context.Context, username string) (d
 		UserName: user.Username,
 		Bio:      user.Bio,
 		ImageUrl: user.ImageUrl,
+	}, nil
+}
+
+func (s *userService) UpdateUser(ctx context.Context, userId string, req dto.UserProfileUpdateRequest) (dto.UserResponse, error) {
+	user, err := s.userRepo.GetUserById(ctx, nil, userId)
+	if err != nil {
+		return dto.UserResponse{}, dto.ErrGetUserById
+	}
+
+	if req.Name != "" {
+		user.Name = req.Name
+	}
+
+	previousImage := user.ImageUrl
+
+	if req.Image != nil {
+		var filenamePtr *string
+		imageId := uuid.New()
+		ext := utils.GetExtensions(req.Image.Filename)
+
+		filename := fmt.Sprintf("profile/%s.%s", imageId, ext)
+		if err := utils.UploadFile(req.Image, filename); err != nil {
+			return dto.UserResponse{}, err
+		}
+		filenamePtr = &filename
+		user.ImageUrl = filenamePtr
+	}
+
+	if req.Bio != "" {
+		var bioPtr *string
+		bio := req.Bio
+		bioPtr = &bio
+		user.Bio = bioPtr
+	}
+
+	userUpdate, err := s.userRepo.UpdateUser(ctx, nil, userId, user)
+	if err != nil {
+		return dto.UserResponse{}, dto.ErrCreateUser
+	}
+
+	if previousImage != nil {
+		if err := utils.DeleteFile(*previousImage); err != nil {
+			return dto.UserResponse{}, err
+		}
+	}
+
+	return dto.UserResponse{
+		ID:       userUpdate.ID.String(),
+		Name:     userUpdate.Name,
+		UserName: userUpdate.Username,
+		Bio:      userUpdate.Bio,
+		ImageUrl: userUpdate.ImageUrl,
 	}, nil
 }
