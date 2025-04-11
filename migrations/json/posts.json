@@ -3,12 +3,14 @@
     "text": "Your heart is the size of an ocean. Go find yourself in its hidden depths."
   },
   {
-    "text": "The Bay of Bengal is hit frequently by cyclones. The months of November and May, in particular, are dangerous in this regard."
+    "text": "The Bay of Bengal is hit frequently by cyclones. The months of November and May, in particular, are dangerous in this regard.",
+    "parent_id": 1
   },
   {
     "text": "Thinking is the capital, Enterprise is the way, Hard Work is the solution."
   },
   {
-    "text": "Life is a gamble. You can get hurt, but people die in plane crashes, lose their arms and legs in car accidents; people die every day. Same with fighters: some die, some get hurt, some go on. You just don't let yourself believe it will happen to you."
+    "text": "Life is a gamble. You can get hurt, but people die in plane crashes, lose their arms and legs in car accidents; people die every day. Same with fighters: some die, some get hurt, some go on. You just don't let yourself believe it will happen to you.",
+    "parent_id": 1
   }
 ]

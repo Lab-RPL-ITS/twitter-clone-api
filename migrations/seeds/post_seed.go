@@ -2,6 +2,7 @@ package seeds
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"os"
 
@@ -31,8 +32,41 @@ func ListPostSeeder(db *gorm.DB) error {
 
 	var user entity.User
 	err = db.Find(&user).Limit(2).Error
-	if err != nil {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
+	}
+
+	var users []entity.User
+	err = db.Find(&users).Limit(2).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+
+	postMap := make(map[int]*entity.Post)
+
+	for i, post := range listPost {
+		newPost := entity.Post{
+			Text:   post.Text,
+			UserID: users[i%len(users)].ID,
+		}
+
+		if err := db.Create(&newPost).Error; err != nil {
+			return err
+		}
+		postMap[i] = &newPost
+	}
+
+	for i, post := range listPost {
+		if post.ParentID != nil {
+			parentPost := postMap[int(*post.ParentID-1)]
+			if parentPost != nil {
+				currentPost := postMap[i]
+				currentPost.ParentID = &parentPost.ID
+				if err := db.Save(currentPost).Error; err != nil {
+					return err
+				}
+			}
+		}
 	}
 
 	return nil
