@@ -19,7 +19,7 @@ func Post(route *gin.Engine, injector *do.Injector) {
 		routes.POST("", middleware.Authenticate(jwtService), postController.CreatePost)
 		routes.GET("/:post_id", postController.GetPostById)
 		routes.DELETE("/:post_id", middleware.Authenticate(jwtService), postController.DeletePostById)
-		routes.PATCH("/:post_id", middleware.Authenticate(jwtService), postController.UpdatePostById)
+		routes.PUT("/:post_id", middleware.Authenticate(jwtService), postController.UpdatePostById)
 		routes.GET("", postController.GetAllPosts)
 	}
 }
