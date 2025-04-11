@@ -35,35 +35,16 @@ func NewUserService(userRepo repository.UserRepository, jwtService JWTService) U
 }
 
 func (s *userService) Register(ctx context.Context, req dto.UserCreateRequest) (dto.UserResponse, error) {
-	var filenamePtr *string
-
 	_, flag, _ := s.userRepo.CheckUsername(ctx, nil, req.UserName)
 	if flag {
 		return dto.UserResponse{}, dto.ErrUsernameAlreadyExists
 	}
 
-	if req.Image != nil {
-		imageId := uuid.New()
-		ext := utils.GetExtensions(req.Image.Filename)
-
-		filename := fmt.Sprintf("profile/%s.%s", imageId, ext)
-		if err := utils.UploadFile(req.Image, filename); err != nil {
-			return dto.UserResponse{}, err
-		}
-		filenamePtr = &filename
-	}
-
-	var bioPtr *string
-	if req.Bio != "" {
-		bio := req.Bio
-		bioPtr = &bio
-	}
-
 	user := entity.User{
 		Name:     req.Name,
 		Username: req.UserName,
-		ImageUrl: filenamePtr,
-		Bio:      bioPtr,
+		ImageUrl: nil,
+		Bio:      nil,
 		Password: req.Password,
 	}
 

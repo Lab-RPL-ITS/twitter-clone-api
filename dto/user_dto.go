@@ -35,11 +35,9 @@ var (
 
 type (
 	UserCreateRequest struct {
-		Name     string                `json:"name" form:"name" binding:"required"`
-		UserName string                `json:"username" form:"username" binding:"required"`
-		Bio      string                `json:"bio" form:"bio"`
-		Image    *multipart.FileHeader `json:"image" form:"image"`
-		Password string                `json:"password" form:"password" binding:"required"`
+		Name     string `json:"name" form:"name" binding:"required"`
+		UserName string `json:"username" form:"username" binding:"required"`
+		Password string `json:"password" form:"password" binding:"required"`
 	}
 
 	UserProfileUpdateRequest struct {
