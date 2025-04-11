@@ -26,6 +26,7 @@ const (
 var (
 	ErrCreatePost     = errors.New("failed to create post")
 	ErrGetPostById    = errors.New("post not found")
+	ErrGetPostReplies = errors.New("failed to get post replies")
 	ErrParseParentID  = errors.New("failed to parse parent id")
 	ErrDeletePostById = errors.New("failed to delete post")
 	ErrUpdatePostById = errors.New("failed to update post")
@@ -44,6 +45,12 @@ type (
 		User     UserResponse `json:"user"`
 	}
 
+	PostRepliesResponse struct {
+		PostResponse
+		Replies []PostResponse `json:"replies"`
+		PaginationResponse
+	}
+
 	PostUpdateRequest struct {
 		Text string `json:"text" form:"text" binding:"required"`
 	}
@@ -55,6 +62,11 @@ type (
 
 	GetAllPostsRepositoryResponse struct {
 		Posts []entity.Post `json:"posts"`
+		PaginationResponse
+	}
+
+	GetAllRepliesRepositoryResponse struct {
+		Replies []entity.Post `json:"replies"`
 		PaginationResponse
 	}
 )
